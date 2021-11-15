@@ -271,3 +271,9 @@ $altTheme: (
     font-family: "Roboto";
   }
 }
+
+// My global stylesheet
+
+main {
+  min-height: calc(100vh - 64px);
+}
