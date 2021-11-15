@@ -1,3 +1,5 @@
+import { AxiosRequestConfig } from 'axios';
+import { environment } from './../environments/environment';
 import { Injectable } from '@angular/core';
 import { ShopifyService } from './shopify.service';
 import { YampiService } from './yampi.service';
@@ -11,5 +13,7 @@ export class ProductService {
     private shopifyService: ShopifyService
   ) {}
 
-  getProducts() {}
+  getProducts() {
+    return this.yampiService.getProducts();
+  }
 }
