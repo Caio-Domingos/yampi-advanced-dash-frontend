@@ -1,1 +1,229 @@
-<p>kit works!</p>
+<main>
+  <div id="home-kit" *ngIf="pageDisplay === 'home'">
+    <h1>Kits</h1>
+
+    <div class="options">
+      <button
+        mat-raised-button
+        color="primary"
+        class="btn-kit"
+        (click)="setView('add')"
+      >
+        <mat-icon aria-hidden="false" aria-label="Example home icon"
+          >add</mat-icon
+        >
+        Criar novo Kit
+      </button>
+      <p>Ou</p>
+      <button
+        mat-raised-button
+        color="primary"
+        class="btn-kit"
+        (click)="setView('list')"
+      >
+        <mat-icon aria-hidden="false" aria-label="Example home icon 2"
+          >list</mat-icon
+        >
+        Veja os existestes
+      </button>
+    </div>
+  </div>
+
+  <div id="display-kits" *ngIf="pageDisplay === 'list'">
+    <h2>Lista de Kits</h2>
+
+    <!-- Tabela de Kits -->
+  </div>
+  <div id="creating-new-kit" *ngIf="pageDisplay === 'add'">
+    <h4>Criação de novo Kit</h4>
+
+    <form [formGroup]="addKitForm" (ngSubmit)="saveKit()">
+      <mat-vertical-stepper
+        #addStepper="matVerticalStepper"
+        formArrayName="addKitFormArray"
+        [linear]="false"
+      >
+        <mat-step formGroupName="0" [stepControl]="addKitFormArray?.get([0])!">
+          <ng-template matStepLabel> Nome do Kit</ng-template>
+
+          <div class="step-content">
+            <mat-form-field>
+              <mat-label>Name</mat-label>
+              <input matInput formControlName="name" required />
+              <mat-error>Esse campo é obrigatório</mat-error>
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>Descrição</mat-label>
+              <textarea matInput formControlName="description"></textarea>
+              <mat-error>Esse campo é obrigatório</mat-error>
+            </mat-form-field>
+
+            <mat-slide-toggle formControlName="active"
+              >Kit ativo?</mat-slide-toggle
+            >
+
+            <button
+              mat-raised-button
+              color="primary"
+              class="step-btn"
+              matStepperNext
+              type="button"
+            >
+              Next
+            </button>
+          </div>
+        </mat-step>
+
+        <mat-step formGroupName="1" [stepControl]="addKitFormArray?.get([1])!">
+          <ng-template matStepLabel> Escolha os produtos</ng-template>
+
+          <div class="step-content">
+            <mat-form-field style="display: none">
+              <mat-label>-</mat-label>
+              <input matInput formControlName="products_ids" required />
+            </mat-form-field>
+
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="openProductPickerDialog()"
+              type="button"
+            >
+              <mat-icon aria-hidden="false" aria-label="Example home icon"
+                >add</mat-icon
+              >
+              Adicionar os produtos
+            </button>
+
+            <div class="step-btns">
+              <button
+                mat-raised-button
+                class="step-btn"
+                color="warn"
+                matStepperPrevious
+                type="button"
+              >
+                Back
+              </button>
+              <button
+                mat-raised-button
+                class="step-btn"
+                color="primary"
+                matStepperNext
+                type="button"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </mat-step>
+
+        <mat-step formGroupName="2" [stepControl]="addKitFormArray?.get([2])!">
+          <ng-template matStepLabel> Defina os valores</ng-template>
+
+          <div class="step-content">
+            <div class="group-inputs">
+              <mat-button-toggle-group formControlName="discount_type">
+                <mat-button-toggle value="p">Porcentagem</mat-button-toggle>
+                <mat-button-toggle value="v">Valor</mat-button-toggle>
+              </mat-button-toggle-group>
+
+              <mat-form-field>
+                <mat-label>Valor do desconto</mat-label>
+                <input
+                  matInput
+                  formControlName="discount_value"
+                  required
+                  [min]="1"
+                />
+                <mat-error>Esse campo é obrigatório</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="step-btns">
+              <button
+                mat-raised-button
+                class="step-btn"
+                color="warn"
+                matStepperPrevious
+                type="button"
+              >
+                Back
+              </button>
+              <button
+                mat-raised-button
+                matStepperNext
+                class="step-btn"
+                color="primary"
+                type="button"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        </mat-step>
+        <mat-step formGroupName="3" [stepControl]="addKitFormArray?.get([3])!">
+          <ng-template matStepLabel> Tempo de operação</ng-template>
+
+          <div class="step-content">
+            <mat-form-field appearance="fill">
+              <mat-label>Enter a date range</mat-label>
+              <mat-date-range-input
+                formGroupName="range"
+                [rangePicker]="picker"
+              >
+                <input
+                  matStartDate
+                  formControlName="start_at"
+                  placeholder="Start date"
+                />
+                <input
+                  matEndDate
+                  formControlName="end_at"
+                  placeholder="End date"
+                />
+              </mat-date-range-input>
+              <mat-datepicker-toggle
+                matSuffix
+                [for]="picker"
+              ></mat-datepicker-toggle>
+              <mat-date-range-picker #picker></mat-date-range-picker>
+
+              <mat-error
+                *ngIf="
+                  rangeDate!.get('start_at')!.hasError('matStartDateInvalid')
+                "
+                >Invalid start date</mat-error
+              >
+              <mat-error
+                *ngIf="rangeDate!.get('end_at')!.hasError('matEndDateInvalid')"
+                >Invalid end date</mat-error
+              >
+            </mat-form-field>
+
+            <div class="step-btns">
+              <button
+                mat-raised-button
+                class="step-btn"
+                color="warn"
+                matStepperPrevious
+                type="button"
+              >
+                Back
+              </button>
+              <button
+                mat-raised-button
+                class="step-btn"
+                color="primary"
+                type="submit"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </mat-step>
+      </mat-vertical-stepper>
+    </form>
+  </div>
+</main>

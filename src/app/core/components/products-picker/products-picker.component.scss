@@ -1,0 +1,31 @@
+.filter-content {
+  mat-form-field {
+    width: calc(100% - 20px);
+    margin-right: 20px;
+  }
+  button {
+    margin-bottom: 1.34375em;
+  }
+}
+
+table {
+  width: 100%;
+}
+
+.checkbox-row {
+  width: 80px;
+}
+
+.product-chips {
+  padding: 5px;
+  max-height: 90px;
+  overflow: hidden;
+  overflow-y: auto;
+}
+
+.footer {
+  button {
+    width: 100%;
+    margin: 0 10px
+  }
+}

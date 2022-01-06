@@ -12,5 +12,7 @@ export class ProductComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     const products = await this.productService.getProducts();
+
+    console.log('yampi products', products);
   }
 }

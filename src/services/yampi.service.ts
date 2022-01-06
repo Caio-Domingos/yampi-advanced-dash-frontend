@@ -6,6 +6,7 @@ import { YampiVariables } from '../../testVariables';
 import axios, { AxiosRequestConfig, AxiosRequestHeaders } from 'axios';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { first } from 'rxjs/operators';
+import { Kit } from './kit.service';
 
 @Injectable({
   providedIn: 'root',
@@ -23,15 +24,13 @@ export class YampiService {
     token: string;
     key: string;
   }>({
-    alias: '',
-    token: '',
-    key: '',
+    alias: YampiVariables.alias,
+    token: YampiVariables.token,
+    key: YampiVariables.key,
   });
 
   constructor(private utilsService: UtilsService) {
     this.credentialKeys.subscribe((ev) => {
-      console.log('Credential Keys - ', ev);
-
       this.headerWithAuthentication = {
         'Content-Type': 'application/json',
         'User-Token': ev.token,
@@ -51,7 +50,28 @@ export class YampiService {
         `${credentials.alias}/catalog/products`,
         this.headerWithAuthentication
       );
-      
+
+      const { data } = await axios.request({ ...coreOptions, ...options });
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+  public async getProductsWithParams(
+    params: string,
+    options: any = {}
+  ): Promise<any> {
+    try {
+      const credentials = await this.getCredentialKeys()
+        .pipe(first())
+        .toPromise();
+
+      const coreOptions = this.utilsService.createAxiosOptions(
+        environment.yampiURL,
+        `${credentials.alias}/catalog/products?${params}`,
+        this.headerWithAuthentication
+      );
+
       const { data } = await axios.request({ ...coreOptions, ...options });
       return data;
     } catch (error) {
@@ -65,6 +85,30 @@ export class YampiService {
     key: string;
   }> {
     return this.credentialKeys.asObservable();
+  }
+
+  public async createKit(kit: Kit, options: any = {}): Promise<any> {
+    try {
+      const credentials = await this.getCredentialKeys()
+        .pipe(first())
+        .toPromise();
+
+      const coreOptions = this.utilsService.createAxiosOptions(
+        environment.yampiURL,
+        `${credentials.alias}/pricing/combos`,
+        this.headerWithAuthentication
+      );
+
+      const data = await axios.request({
+        ...coreOptions,
+        ...options,
+        method: 'POST',
+        data: kit
+      });
+      return data;
+    } catch (error) {
+      throw error;
+    }
   }
 
   public updateYampiCredentialKeys(

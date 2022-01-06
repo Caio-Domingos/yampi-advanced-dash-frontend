@@ -1,0 +1,69 @@
+main {
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  #home-kit {
+    & > h1 {
+      text-align: center;
+      font-size: 40px;
+    }
+    .options {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      p {
+        font-size: 20px;
+        margin: 0 15px;
+      }
+      .btn-kit {
+        padding: 10px 30px;
+        font-size: 25px;
+
+        .mat-icon {
+          width: 36px;
+          height: 36px;
+          font-size: 32px;
+        }
+      }
+    }
+  }
+
+  #creating-new-kit {
+    width: 100%;
+
+    .step-content {
+      padding: 20px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+
+      .group-inputs {
+        display: flex;
+        justify-content: space-between;
+
+        mat-button-toggle-group {
+          margin-right: 20px;
+        }
+      }
+
+      .step-btns {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        .step-btn {
+          margin: 20px 10px;
+        }
+      }
+      .step-btn {
+        margin-top: 20px;
+      }
+    }
+  }
+}
+
+#display-kits {
+  padding: 20px 0;
+}

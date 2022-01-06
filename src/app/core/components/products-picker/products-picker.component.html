@@ -1,0 +1,97 @@
+<section id="products-picker">
+  <mat-grid-list cols="9" [rowHeight]="80" class="filter-content">
+    <mat-grid-tile [colspan]="7">
+      <mat-form-field appearance="outline">
+        <mat-label>Procurar por nome</mat-label>
+        <input matInput #filterValue placeholder="Placeholder" />
+      </mat-form-field>
+    </mat-grid-tile>
+    <mat-grid-tile [colspan]="1">
+      <button mat-flat-button color="primary" (click)="refreshFilter()">
+        Pesquisar
+      </button>
+    </mat-grid-tile>
+    <mat-grid-tile [colspan]="1">
+      <button mat-flat-button color="warn" (click)="clearFilter()">
+        Limpar
+      </button>
+    </mat-grid-tile>
+  </mat-grid-list>
+
+  <div class="product-chips">
+    <mat-chip-list #chipList>
+      <mat-chip *ngFor="let item of myProducts" (removed)="removeItem(item)">
+        {{ item.name }}
+        <button matChipRemove>
+          <mat-icon>cancel</mat-icon>
+        </button>
+      </mat-chip>
+    </mat-chip-list>
+  </div>
+
+  <!-- Products Table -->
+  <div class="mat-elevation-z8">
+    <table mat-table [dataSource]="products">
+      <ng-container matColumnDef="select">
+        <th mat-header-cell *matHeaderCellDef class="checkbox-row">
+          <mat-checkbox
+            disabled
+            (change)="$event ? masterToggle() : null"
+            [checked]="selection.hasValue() && isAllSelected()"
+            [indeterminate]="selection.hasValue() && !isAllSelected()"
+          >
+          </mat-checkbox>
+        </th>
+        <td mat-cell *matCellDef="let row" class="checkbox-row">
+          <mat-checkbox
+            (click)="$event.stopPropagation()"
+            (change)="$event ? selection.toggle(row.id) : null"
+            [checked]="selection.isSelected(row.id)"
+          >
+          </mat-checkbox>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>ID</th>
+        <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Nome</th>
+        <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.active ? "Ativo" : "Desativo" }}
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+
+    <mat-paginator
+      [pageSizeOptions]="[5, 10, 15]"
+      [pageSize]="10"
+      [length]="productsCount"
+    >
+    </mat-paginator>
+  </div>
+
+  <mat-grid-list cols="9" [rowHeight]="80" class="footer">
+    <mat-grid-tile [colspan]="2">
+      <button mat-flat-button color="warn" (click)="closeDialog(false)">
+        Cancelar
+      </button>
+    </mat-grid-tile>
+    <mat-grid-tile [colspan]="7">
+      <button mat-flat-button color="primary" (click)="closeDialog(true)">
+        Selecionar
+      </button>
+    </mat-grid-tile>
+  </mat-grid-list>
+  <div class="footer"></div>
+</section>
