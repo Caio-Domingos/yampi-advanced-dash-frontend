@@ -61,6 +61,7 @@ export class ProductsPickerComponent implements AfterViewInit {
             'sortedBy=asc',
             `page=${pageData !== undefined ? pageData.page! + 1 : 1}`,
             `limit=${this.paginator.pageSize}`,
+            'skipCache=true'
           ];
 
           if (filterData.value) {
@@ -150,6 +151,6 @@ export class ProductsPickerComponent implements AfterViewInit {
 
 export interface Product {
   id: number;
-  name: string;
-  active: boolean;
+  name?: string;
+  active?: boolean;
 }

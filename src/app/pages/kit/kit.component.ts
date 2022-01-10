@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, OnInit } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -10,7 +10,7 @@ import {
   Product,
   ProductsPickerComponent,
 } from 'src/app/core/components/products-picker/products-picker.component';
-import { KitService } from 'src/services/kit.service';
+import { Kit, KitService } from 'src/services/kit.service';
 
 import { DateTime } from 'luxon';
 
@@ -20,22 +20,24 @@ import { DateTime } from 'luxon';
   styleUrls: ['./kit.component.scss'],
 })
 export class KitComponent implements OnInit, AfterViewInit {
-  pageDisplay: string = 'add';
+  pageDisplay: string = 'home';
+  editID: string = '';
+  itemDelected: EventEmitter<string> = new EventEmitter(true);
 
   productsNewKit: Product[] = [];
   addKitForm: FormGroup = this.fb.group({
     addKitFormArray: this.fb.array([
       this.fb.group({
-        name: ['Meu novo Kit', [Validators.required]],
-        description: ['Um bom kit novo'],
+        name: ['', [Validators.required]],
+        description: [''],
         active: [true],
       }),
       this.fb.group({
-        products_ids: ['1, 2, 3', [Validators.required]],
+        products_ids: ['', [Validators.required]],
       }),
       this.fb.group({
         discount_type: ['p', [Validators.required]],
-        discount_value: [20, [Validators.required, Validators.min(1)]],
+        discount_value: [0, [Validators.required, Validators.min(1)]],
       }),
       this.fb.group({
         range: this.fb.group({
@@ -98,6 +100,11 @@ export class KitComponent implements OnInit, AfterViewInit {
 
   setView(view: string) {
     this.pageDisplay = view;
+
+    if (view === 'add') {
+      this.addKitForm.reset();
+      this.editID = '';
+    }
   }
 
   removeProduct(item: Product): void {
@@ -107,6 +114,77 @@ export class KitComponent implements OnInit, AfterViewInit {
 
     this.productsNewKit.splice(index, 1);
     this.updateProductsID();
+  }
+
+  editKit(kit: any) {
+    console.log('Kit editing => ', kit);
+    this.editID = kit.kitObject.id;
+
+    this.updateFormValues(kit);
+    this.pageDisplay = 'edit';
+  }
+
+  private updateFormValues(kit: any) {
+    this.addKitFormArray?.get([0])?.get('name')?.setValue(kit.kitObject.name);
+    this.addKitFormArray
+      ?.get([0])
+      ?.get('description')
+      ?.setValue(kit.kitObject.description);
+    this.addKitFormArray
+      ?.get([0])
+      ?.get('active')
+      ?.setValue(kit.kitObject.active);
+
+    const prodString = kit.kitObject.products_ids!.join(', ');
+    this.productsNewKit = kit.kitObject.products_ids!.map(
+      (product: Product) => {
+        return {
+          id: product,
+        };
+      }
+    );
+    this.addKitFormArray?.get([1])?.get('products_ids')?.setValue(prodString);
+
+    this.addKitFormArray
+      ?.get([2])
+      ?.get('discount_type')
+      ?.setValue(kit.kitObject.discount_type);
+    this.addKitFormArray
+      ?.get([2])
+      ?.get('discount_value')
+      ?.setValue(kit.kitObject.discount_value);
+
+    console.log('date => ', new Date(kit.kitObject.start_at.date));
+    this.addKitFormArray
+      ?.get([3])
+      ?.get('range')
+      ?.get('start_at')
+      ?.setValue(new Date(kit.kitObject.start_at.date));
+    this.addKitFormArray
+      ?.get([3])
+      ?.get('range')
+      ?.get('end_at')
+      ?.setValue(new Date(kit.kitObject.end_at.date));
+
+    this.addKitForm.updateValueAndValidity();
+  }
+
+  async deleteKit(kit: any) {
+    try {
+      console.log('Kit deleting => ', kit);
+      const response = await this.kitService.deleteKit(kit.kitObject);
+      console.log('Response => ', response);
+      this.itemDelected.emit(kit.kitObject.id);
+    } catch (error: any) {
+      if (error.response) {
+        console.log(error.response.data);
+      } else if (error.request) {
+        console.log(error.request);
+      } else {
+        console.log('Error', error.message);
+      }
+      console.log(error.config);
+    }
   }
 
   async saveKit() {
@@ -131,22 +209,22 @@ export class KitComponent implements OnInit, AfterViewInit {
       console.log('My form values => ', form);
 
       // return;
-      const response = await this.kitService.saveKit(form);
+      let response;
+      if (this.pageDisplay === 'add') {
+        response = await this.kitService.saveKit(form);
+      } else if (this.pageDisplay === 'edit') {
+        response = await this.kitService.updateKit({
+          ...form,
+          id: this.editID,
+        });
+      }
       console.log('response => ', response);
     } catch (error: any) {
       if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
         console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
       } else if (error.request) {
-        // The request was made but no response was received
-        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-        // http.ClientRequest in node.js
         console.log(error.request);
       } else {
-        // Something happened in setting up the request that triggered an Error
         console.log('Error', error.message);
       }
       console.log(error.config);

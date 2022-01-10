@@ -7,9 +7,10 @@ import { CommonModule } from '@angular/common';
 import { KitRoutingModule } from './kit-routing.module';
 import { KitComponent } from './kit.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { KitSelectorComponent } from './kit-selector/kit-selector.component';
 
 @NgModule({
-  declarations: [KitComponent],
+  declarations: [KitComponent, KitSelectorComponent],
   imports: [
     CommonModule,
     KitRoutingModule,

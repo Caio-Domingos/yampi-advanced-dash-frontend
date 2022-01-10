@@ -3,6 +3,7 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
 
   #home-kit {
     & > h1 {
@@ -29,6 +30,11 @@ main {
         }
       }
     }
+  }
+
+  #display-kits {
+    width: 100%;
+    padding: 20px 0;
   }
 
   #creating-new-kit {
@@ -62,8 +68,10 @@ main {
       }
     }
   }
-}
 
-#display-kits {
-  padding: 20px 0;
+  .fab-back {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+  }
 }
