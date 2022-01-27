@@ -47,6 +47,7 @@
             (click)="$event.stopPropagation()"
             (change)="$event ? selection.toggle(row.id) : null"
             [checked]="selection.isSelected(row.id)"
+            [disabled]="selection.selected.length > 1 && !multipleSelection"
           >
           </mat-checkbox>
         </td>

@@ -1,0 +1,77 @@
+main {
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  #home {
+    & > h1 {
+      text-align: center;
+      font-size: 40px;
+    }
+    .options {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      p {
+        font-size: 20px;
+        margin: 0 15px;
+      }
+      .btn-kit {
+        padding: 10px 30px;
+        font-size: 25px;
+
+        .mat-icon {
+          width: 36px;
+          height: 36px;
+          font-size: 32px;
+        }
+      }
+    }
+  }
+
+  #editor {
+    width: 80%;
+    .step-content {
+      display: flex;
+
+      &.col {
+        flex-direction: column;
+        &.start {
+          align-items: flex-start;
+        }
+        &.middle {
+          align-items: center;
+        }
+        &.end {
+          align-items: flex-end;
+        }
+      }
+      &.row {
+        flex-direction: row;
+        &.start {
+          justify-content: flex-start;
+        }
+        &.middle {
+          justify-content: center;
+        }
+        &.end {
+          justify-content: flex-end;
+        }
+      }
+
+      & > * {
+        margin: 10px;
+        margin-left: 0;
+      }
+    }
+  }
+
+  .fab-back {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+  }
+}

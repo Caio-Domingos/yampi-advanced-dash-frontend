@@ -5,6 +5,7 @@ import {
   Component,
   ElementRef,
   Inject,
+  Input,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -31,16 +32,21 @@ export class ProductsPickerComponent implements AfterViewInit {
   products = new MatTableDataSource<Product>([]);
   productsCount: number = 0;
 
+  multipleSelection: boolean = true;
+
   constructor(
     private kitService: KitService,
     public dialogRef: MatDialogRef<ProductsPickerComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { products: Product[] }
+    @Inject(MAT_DIALOG_DATA)
+    public data: { products: Product[]; multiple?: boolean }
   ) {}
 
   ngAfterViewInit() {
+    this.multipleSelection = !!this.data.multiple;
+
     setTimeout(() => {
       const idProductsAlreadySelecteds: number[] = this.data.products.map(
-        (p) => p.id
+        (p) => p.id!
       );
       this.selection.select(...idProductsAlreadySelecteds);
     }, 200);
@@ -59,9 +65,10 @@ export class ProductsPickerComponent implements AfterViewInit {
           let params = [
             'orderBy=name',
             'sortedBy=asc',
+            'include=skus',
             `page=${pageData !== undefined ? pageData.page! + 1 : 1}`,
             `limit=${this.paginator.pageSize}`,
-            'skipCache=true'
+            'skipCache=true',
           ];
 
           if (filterData.value) {
@@ -127,7 +134,7 @@ export class ProductsPickerComponent implements AfterViewInit {
       return;
     }
 
-    this.selection.select(...this.products.data.map((e) => e.id));
+    this.selection.select(...this.products.data.map((e) => e.id!));
   }
 
   refreshFilter() {
@@ -141,7 +148,7 @@ export class ProductsPickerComponent implements AfterViewInit {
   }
 
   removeItem(item: Product) {
-    this.selection.deselect(item.id);
+    this.selection.deselect(item.id!);
   }
 
   closeDialog(sendData: boolean) {
@@ -150,7 +157,125 @@ export class ProductsPickerComponent implements AfterViewInit {
 }
 
 export interface Product {
-  id: number;
-  name?: string;
+  id?: number;
+  merchant_id?: number;
   active?: boolean;
+  simple?: boolean;
+  has_variations?: boolean;
+  name?: string;
+  slug?: string;
+  rating?: number;
+  url?: string;
+  dates?: {
+    data: {
+      created_at?: {
+        date: Date;
+        timezone_type: number;
+        timezone: string;
+      };
+      updated_at?: {
+        date: Date;
+        timezone_type: number;
+        timezone: string;
+      };
+    };
+  };
+  brand?: {
+    data?: {
+      id: number;
+      active: boolean;
+      featured: boolean;
+      name: string;
+      description: string | null;
+      logo_url: string | null;
+    };
+  };
+  extras?: {
+    data?: {
+      video: string;
+      search_terms: string;
+      ncm: string | null;
+    };
+  };
+  texts?: {
+    data?: {
+      description: string;
+      specifications: string;
+      measures: any;
+    };
+  };
+  seo?: {
+    data?: {
+      seo_title: string;
+      seo_description: string;
+      seo_keywords: string;
+    };
+  };
+  filters?: {
+    data?: [
+      {
+        name: string;
+        value: string;
+        value_id: number;
+        color: string;
+      }
+    ];
+  };
+  flags?: {
+    data?: any[];
+  };
+  variations?: {
+    data?: {
+      id: number;
+      name: string;
+      values: {
+        id: number;
+        value: string;
+        color: string;
+      }[];
+    }[];
+  };
+  categories?: {
+    data?: {
+      id: number;
+      name: string;
+    }[];
+  };
+  images?: {
+    data?: {
+      [id: string]: {
+        width: number;
+        height: number;
+        url: string;
+      };
+    }[];
+  };
+  skus?: {
+    data?: [
+      {
+        id?: number;
+        sku?: string;
+        blocked_sale?: boolean;
+        barcode?: any;
+        title?: string;
+        days_availability?: number;
+        days_availability_formated?: string;
+        width?: number;
+        height?: number;
+        length?: number;
+        weight?: number;
+        quantity_managed?: boolean;
+        price_cost?: number;
+        price_sale?: number;
+        price_discount?: number;
+        variations?: {
+          name?: string;
+          value?: string;
+          value_id?: number;
+        }[];
+        stocks: any[];
+      }
+    ];
+  };
+  status?: boolean;
 }

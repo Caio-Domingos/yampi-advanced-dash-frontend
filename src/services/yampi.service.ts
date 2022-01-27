@@ -1,3 +1,4 @@
+import { Upsell } from 'src/services/upsell.service';
 import { UtilsService } from './utils.service';
 import { environment } from './../environments/environment';
 import { Injectable } from '@angular/core';
@@ -121,6 +122,27 @@ export class YampiService {
       throw error;
     }
   }
+  public async getUpsellsWithParams(
+    params: string,
+    options: any = {}
+  ): Promise<any> {
+    try {
+      const credentials = await this.getCredentialKeys()
+        .pipe(first())
+        .toPromise();
+
+      const coreOptions = this.utilsService.createAxiosOptions(
+        environment.yampiURL,
+        `${credentials.alias}/pricing/upsells?${params}`,
+        this.headerWithAuthentication
+      );
+
+      const { data } = await axios.request({ ...coreOptions, ...options });
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
 
   public async createKit(kit: Kit, options: any = {}): Promise<any> {
     try {
@@ -177,6 +199,75 @@ export class YampiService {
       const coreOptions = this.utilsService.createAxiosOptions(
         environment.yampiURL,
         `${credentials.alias}/pricing/combos/${kit.id}`,
+        this.headerWithAuthentication
+      );
+
+      const data = await axios.request({
+        ...coreOptions,
+        ...options,
+        method: 'DELETE',
+      });
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  public async createUpsell(upsell: Upsell, options: any = {}): Promise<any> {
+    try {
+      const credentials = await this.getCredentialKeys()
+        .pipe(first())
+        .toPromise();
+
+      const coreOptions = this.utilsService.createAxiosOptions(
+        environment.yampiURL,
+        `${credentials.alias}/pricing/upsells`,
+        this.headerWithAuthentication
+      );
+
+      const data = await axios.request({
+        ...coreOptions,
+        ...options,
+        method: 'POST',
+        data: upsell,
+      });
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+  public async editUpsell(upsell: Upsell, options: any = {}): Promise<any> {
+    try {
+      const credentials = await this.getCredentialKeys()
+        .pipe(first())
+        .toPromise();
+
+      const coreOptions = this.utilsService.createAxiosOptions(
+        environment.yampiURL,
+        `${credentials.alias}/pricing/upsells/${upsell.id}`,
+        this.headerWithAuthentication
+      );
+
+      const data = await axios.request({
+        ...coreOptions,
+        ...options,
+        method: 'PUT',
+        data: upsell,
+      });
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+  public async deleteUpsell(upsell: string, options: any = {}): Promise<any> {
+    try {
+      const credentials = await this.getCredentialKeys()
+        .pipe(first())
+        .toPromise();
+
+      const coreOptions = this.utilsService.createAxiosOptions(
+        environment.yampiURL,
+        `${credentials.alias}/pricing/upsells/${upsell}`,
         this.headerWithAuthentication
       );
 

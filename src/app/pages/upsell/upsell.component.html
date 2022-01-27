@@ -1,1 +1,318 @@
-<p>upsell works!</p>
+<main [style.alignItems]="pageDisplay === 'home' ? 'center' : 'flex-start'">
+  <div id="home" *ngIf="pageDisplay === 'home'">
+    <h1>Upsells</h1>
+
+    <div class="options">
+      <button
+        mat-raised-button
+        color="primary"
+        class="btn-kit"
+        (click)="setView('add')"
+      >
+        <mat-icon aria-hidden="false" aria-label="Example home icon"
+          >add</mat-icon
+        >
+        Criar novo Upsell
+      </button>
+      <p>Ou</p>
+      <button
+        mat-raised-button
+        color="primary"
+        class="btn-kit"
+        (click)="setView('list')"
+      >
+        <mat-icon aria-hidden="false" aria-label="Example home icon 2"
+          >list</mat-icon
+        >
+        Veja os existestes
+      </button>
+    </div>
+  </div>
+  <div id="list" *ngIf="pageDisplay === 'list'">
+    <yad-upsell-selector
+      (editUpsell)="editUpsell($event)"
+      (deleteUpsell)="deleteUpsell($event)"
+      [deleteEvent]="deletedItem"
+    ></yad-upsell-selector>
+  </div>
+  <div id="editor" *ngIf="pageDisplay === 'add' || pageDisplay === 'edit'">
+    <form [formGroup]="upsellForm" (ngSubmit)="saveUpsell()">
+      <mat-vertical-stepper
+        #upsellFormStepper="matVerticalStepper"
+        formArrayName="array"
+        [linear]="false"
+      >
+        <mat-step formGroupName="0" [stepControl]="upsellForm1">
+          <ng-template matStepLabel> Nome do Upsell</ng-template>
+
+          <div class="step-content col start">
+            <mat-form-field>
+              <mat-label>Name</mat-label>
+              <input matInput formControlName="name" required />
+              <mat-error>Esse campo é obrigatório</mat-error>
+            </mat-form-field>
+
+            <mat-slide-toggle formControlName="active"
+              >Kit ativo?</mat-slide-toggle
+            >
+
+            <mat-button-toggle-group formControlName="context">
+              <mat-button-toggle value="before">No Checkout</mat-button-toggle>
+              <mat-button-toggle value="after"
+                >Na Finalização</mat-button-toggle
+              >
+              <mat-button-toggle value="delayed">Por email</mat-button-toggle>
+            </mat-button-toggle-group>
+
+            <button
+              mat-raised-button
+              color="primary"
+              class="step-btn"
+              matStepperNext
+              type="button"
+            >
+              Próximo
+            </button>
+          </div>
+        </mat-step>
+        <mat-step formGroupName="1" [stepControl]="upsellForm2">
+          <ng-template matStepLabel> Produto à oferecer</ng-template>
+
+          <div class="step-content col start">
+            <mat-form-field style="display: none">
+              <mat-label>-</mat-label>
+              <input matInput formControlName="purchased_product_id" required />
+            </mat-form-field>
+
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="openProductPickerDialog('p')"
+              type="button"
+            >
+              <mat-icon aria-hidden="false" aria-label="Example home icon"
+                >add</mat-icon
+              >
+              Adicionar os produtos
+            </button>
+            <p>
+              {{
+                purchasedProducts.length > 0
+                  ? purchasedProducts.length + " produtos selecionados"
+                  : "Nenhum produto selecionado"
+              }}
+            </p>
+
+            <div class="step-content row start">
+              <button
+                mat-raised-button
+                class="step-btn"
+                color="warn"
+                matStepperPrevious
+                type="button"
+              >
+                Voltar
+              </button>
+              <button
+                mat-raised-button
+                color="primary"
+                class="step-btn"
+                matStepperNext
+                type="button"
+              >
+                Próximo
+              </button>
+            </div>
+          </div>
+        </mat-step>
+        <mat-step formGroupName="2" [stepControl]="upsellForm3">
+          <ng-template matStepLabel> Produto com o Upsell</ng-template>
+
+          <div class="step-content col start">
+            <mat-form-field style="display: none">
+              <mat-label>-</mat-label>
+              <input matInput formControlName="suggested_product_id" required />
+            </mat-form-field>
+
+            <mat-slide-toggle
+              [checked]="sameProduct"
+              (change)="changeSameProductToggle($event)"
+              >Oferta do mesmo produto?</mat-slide-toggle
+            >
+
+            <ng-container *ngIf="!sameProduct">
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="openProductPickerDialog('s')"
+                type="button"
+              >
+                <mat-icon aria-hidden="false" aria-label="Example home icon"
+                  >add</mat-icon
+                >
+                Adicionar o produto
+              </button>
+              <p>
+                {{
+                  suggestedProduct?.id
+                    ? "Produto " + suggestedProduct!.name + " selecionado"
+                    : "Nenhum produto selecionado"
+                }}
+              </p>
+              <p></p>
+            </ng-container>
+
+            <div class="step-content row start">
+              <button
+                mat-raised-button
+                class="step-btn"
+                color="warn"
+                matStepperPrevious
+                type="button"
+              >
+                Voltar
+              </button>
+              <button
+                mat-raised-button
+                color="primary"
+                class="step-btn"
+                matStepperNext
+                type="button"
+              >
+                Próximo
+              </button>
+            </div>
+          </div>
+        </mat-step>
+        <mat-step formGroupName="3" [stepControl]="upsellForm4">
+          <ng-template matStepLabel> Valores </ng-template>
+
+          <div class="step-content col start">
+            <mat-form-field>
+              <mat-label>Quantidade do produto</mat-label>
+              <input
+                matInput
+                formControlName="product_quantity"
+                type="number"
+                required
+              />
+              <mat-error>Esse campo é obrigatório</mat-error>
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>Preço do produto</mat-label>
+              <input
+                matInput
+                formControlName="product_price"
+                type="number"
+                required
+              />
+              <mat-error>Esse campo é obrigatório</mat-error>
+            </mat-form-field>
+
+            <div class="step-content row start">
+              <button
+                mat-raised-button
+                class="step-btn"
+                color="warn"
+                matStepperPrevious
+                type="button"
+              >
+                Voltar
+              </button>
+              <button
+                mat-raised-button
+                color="primary"
+                class="step-btn"
+                matStepperNext
+                type="button"
+                *ngIf="upsellForm1.get('context')?.value !== 'before'"
+              >
+                Próximo
+              </button>
+              <button
+                mat-raised-button
+                color="primary"
+                class="step-btn"
+                type="submit"
+                *ngIf="upsellForm1.get('context')?.value === 'before'"
+              >
+                Salvar
+              </button>
+            </div>
+          </div>
+        </mat-step>
+        <mat-step
+          formGroupName="4"
+          [stepControl]="upsellForm5"
+          *ngIf="upsellForm1.get('context')?.value !== 'before'"
+        >
+          <ng-template matStepLabel> Informações adicionais </ng-template>
+
+          <div class="step-content col start">
+            <mat-form-field
+              [style.display]="
+                upsellForm1.get('context')?.value !== 'delayed'
+                  ? 'none'
+                  : 'block'
+              "
+            >
+              <mat-label>Assunto do email</mat-label>
+              <input
+                matInput
+                formControlName="email_subject"
+                type="number"
+                required
+              />
+              <mat-error>Esse campo é obrigatório</mat-error>
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>{{
+                upsellForm1.get("context")?.value === "delayed"
+                  ? "Corpo do email"
+                  : "Mensagem do Upsell"
+              }}</mat-label>
+              <textarea matInput formControlName="description"></textarea>
+              <mat-error>Esse campo é obrigatório</mat-error>
+            </mat-form-field>
+
+            <div class="step-content row start">
+              <button
+                mat-raised-button
+                class="step-btn"
+                color="warn"
+                matStepperPrevious
+                type="button"
+              >
+                Voltar
+              </button>
+              <button
+                mat-raised-button
+                color="primary"
+                class="step-btn"
+                type="submit"
+              >
+                Salvar
+              </button>
+            </div>
+          </div>
+        </mat-step>
+      </mat-vertical-stepper>
+    </form>
+  </div>
+
+  <div
+    [style.display]="pageDisplay === 'home' ? 'none' : 'block'"
+    class="fab-back"
+  >
+    <button
+      mat-fab
+      color="warn"
+      aria-label="Example icon button with a menu icon"
+      (click)="pageDisplay = 'home'"
+    >
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+  </div>
+</main>

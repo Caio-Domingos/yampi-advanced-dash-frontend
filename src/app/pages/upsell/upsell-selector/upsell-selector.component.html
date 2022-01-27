@@ -1,0 +1,59 @@
+<div class="mat-elevation-z8">
+  <table mat-table [dataSource]="upsells">
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Nome</th>
+      <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="purchased_product">
+      <th mat-header-cell *matHeaderCellDef>Prod. Comprado</th>
+      <td mat-cell *matCellDef="let element">{{ element.purchased_product }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="suggested_product">
+      <th mat-header-cell *matHeaderCellDef>Prod. Sugerido</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.suggested_product }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Status</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.status }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Açoes</th>
+      <td mat-cell *matCellDef="let element">
+        <button
+          mat-icon-button
+          aria-label="Example icon button with a vertical three dot icon"
+          color="primary"
+          (click)="editUpsell.emit(element)"
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          aria-label="Example icon button with a vertical three dot icon"
+          color="warn"
+          (click)="deleteUpsell.emit(element)"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+
+  <mat-paginator
+    [pageSizeOptions]="[5, 10, 15]"
+    [pageSize]="10"
+    [length]="upsellsCount"
+  >
+  </mat-paginator>
+</div>
