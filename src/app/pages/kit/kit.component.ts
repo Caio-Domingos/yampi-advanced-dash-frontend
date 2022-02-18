@@ -219,6 +219,7 @@ export class KitComponent implements OnInit, AfterViewInit {
         });
       }
       console.log('response => ', response);
+      this.setView('home');
     } catch (error: any) {
       if (error.response) {
         console.log(error.response.data);

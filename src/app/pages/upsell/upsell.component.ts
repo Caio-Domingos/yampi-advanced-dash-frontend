@@ -275,8 +275,10 @@ export class UpsellComponent implements OnInit {
           console.log('response =>', response);
 
           atualIndex++;
-          if (atualIndex === this.purchasedProducts.length)
+          if (atualIndex === this.purchasedProducts.length) {
             clearInterval(intervalID);
+            this.setView('home');
+          }
         } catch (error: any) {
           if (error.response) {
             console.log(error.response.data);
