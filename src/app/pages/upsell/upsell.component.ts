@@ -15,7 +15,7 @@ import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 })
 export class UpsellComponent implements OnInit {
   pageDisplay: string = 'add';
-  deletedItem: EventEmitter<string> = new EventEmitter(true);
+  deletedItem: EventEmitter<number> = new EventEmitter(true);
   editID: number = 0;
   purchaseProductEditing: number = 0;
 
@@ -206,7 +206,7 @@ export class UpsellComponent implements OnInit {
 
   public async deleteUpsell(upsell: number) {
     try {
-      console.log('delete => ', event);
+      console.log('delete => ', upsell);
       const response = await this.upsellService.delete(upsell);
       this.deletedItem.emit(response);
     } catch (error: any) {

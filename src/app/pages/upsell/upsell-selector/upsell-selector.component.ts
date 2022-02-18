@@ -29,8 +29,8 @@ export class UpsellSelectorComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   @Output() editUpsell: EventEmitter<Upsell> = new EventEmitter(true);
-  @Output() deleteUpsell: EventEmitter<string> = new EventEmitter(true);
-  @Input() deleteEvent: EventEmitter<string> = new EventEmitter(true);
+  @Output() deleteUpsell: EventEmitter<number> = new EventEmitter(true);
+  @Input() deleteEvent: EventEmitter<number> = new EventEmitter(true);
 
   upsells = new MatTableDataSource<Upsell>([]);
   upsellsCount: number = 0;
