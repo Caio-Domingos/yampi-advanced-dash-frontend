@@ -99,22 +99,27 @@ export class ProductsPickerComponent implements AfterViewInit {
       console.log('selection event => ', event);
 
       if (event.added.length > 0) {
-        const prod = !!this.products.data.find((e) => e.id === event.added[0])
-          ? this.products.data.find((e) => e.id === event.added[0])
-          : this.data.products.find((e) => e.id === event.added[0]);
 
-        this.myProducts.push({
-          ...prod,
-          id: event.added[0],
-        });
+        event.added.forEach(el => {
+          const prod = !!this.products.data.find((e) => e.id === el)
+            ? this.products.data.find((e) => e.id === el)
+            : this.data.products.find((e) => e.id === el);
+
+          this.myProducts.push({
+            ...prod,
+            id: el,
+          });
+        })
       }
 
       if (event.removed.length > 0) {
-        const prodIndex = this.myProducts.findIndex(
-          (e) => e.id === event.removed[0]
-        );
+        event.removed.forEach(el => {
+          const prodIndex = this.myProducts.findIndex(
+            (e) => e.id === el
+          );
 
-        this.myProducts.splice(prodIndex, 1);
+          this.myProducts.splice(prodIndex, 1);
+        })
       }
 
       console.log('My Product List => ', this.myProducts);
@@ -122,14 +127,20 @@ export class ProductsPickerComponent implements AfterViewInit {
   }
 
   isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.products.data.length;
-    return numSelected === numRows;
+    let checked = true;
+    this.products.data.forEach((el) => {
+      const product = this.selection.selected.findIndex((s) => s === el.id);
+      if (product === -1) {
+        checked = false;
+      }
+    });
+
+    return checked;
   }
 
-  masterToggle() {
+  masterToggle(event: boolean) {
     if (this.isAllSelected()) {
-      this.selection.clear();
+      this.selection.deselect(...this.products.data.map((e) => e.id!));
       return;
     }
 

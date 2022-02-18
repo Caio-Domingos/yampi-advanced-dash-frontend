@@ -112,6 +112,8 @@ export class OrderBumpComponent implements OnInit {
     this.orderBumpForm2
       .get('sameProduct')
       ?.valueChanges.subscribe((_) => this.changeSameProduct());
+
+    // this.openProductPickerDialog('d');
   }
 
   public setView(view: string) {
