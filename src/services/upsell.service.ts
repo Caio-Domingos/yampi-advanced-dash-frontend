@@ -34,7 +34,7 @@ export class UpsellService {
   update(upsell: Upsell) {
     return this.yampiService.editUpsell(upsell);
   }
-  delete(upsell: string) {
+  delete(upsell: number) {
     return this.yampiService.deleteUpsell(upsell);
   }
 }

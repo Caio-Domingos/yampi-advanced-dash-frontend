@@ -260,7 +260,7 @@ export class YampiService {
       throw error;
     }
   }
-  public async deleteUpsell(upsell: string, options: any = {}): Promise<any> {
+  public async deleteUpsell(upsell: number, options: any = {}): Promise<any> {
     try {
       const credentials = await this.getCredentialKeys()
         .pipe(first())

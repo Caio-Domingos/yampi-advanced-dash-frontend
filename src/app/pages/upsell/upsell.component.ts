@@ -204,9 +204,21 @@ export class UpsellComponent implements OnInit {
     this.pageDisplay = 'edit';
   }
 
-  public async deleteUpsell(upsell: string) {
+  public async deleteUpsell(upsell: number) {
     try {
-    } catch (error) {}
+      console.log('delete => ', event);
+      const response = await this.upsellService.delete(upsell);
+      this.deletedItem.emit(response);
+    } catch (error: any) {
+      if (error.response) {
+        console.log(error.response.data);
+      } else if (error.request) {
+        console.log(error.request);
+      } else {
+        console.log('Error', error.message);
+      }
+      console.log(error.config);
+    }
   }
 
   public async saveUpsell() {
