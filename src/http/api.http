@@ -1,0 +1,39 @@
+GET https://api.dooki.com.br/v2/pointify/pricing/order-bumps
+Content-Type: application/json
+User-Token: d49b2a56ab9240634f64253a4f2be5d4125fa39d
+User-Secret-Key: sk_K1KT1GmeTLdv1genX8LTstL8X7khaZS04Izam
+
+###
+
+POST https://api.dooki.com.br/v2/pointify/pricing/order-bumps
+Content-Type: application/json
+User-Token: d49b2a56ab9240634f64253a4f2be5d4125fa39d
+User-Secret-Key: sk_K1KT1GmeTLdv1genX8LTstL8X7khaZS04Izam
+
+{
+  "accepted_payment": "all",
+  "active": true,
+  "amount_rule": "greater_than",
+  "amount_value": 0,
+  "display_product_ids": [],
+  "display_rule": "always",
+  "id": 1,
+  "name": "teste",
+  "params": {
+    "button_text": "+ Adicionar oferta",
+    "title": "Compra de agora mesmo!",
+    "message": "OK OK"
+  },
+  "pre_select_variation": true,
+  "price_discount": 60,
+  "price_sale": 75,
+  "resource_id": 3697207,
+  "resource_type": "product",
+}
+
+###
+
+DELETE https://api.dooki.com.br/v2/pointify/pricing/order-bumps/49354
+Content-Type: application/json
+User-Token: d49b2a56ab9240634f64253a4f2be5d4125fa39d
+User-Secret-Key: sk_K1KT1GmeTLdv1genX8LTstL8X7khaZS04Izam

@@ -1,3 +1,4 @@
+import { OrderBump } from './order-bump.service';
 import { Upsell } from 'src/services/upsell.service';
 import { UtilsService } from './utils.service';
 import { environment } from './../environments/environment';
@@ -101,6 +102,7 @@ export class YampiService {
       throw error;
     }
   }
+
   public async getKitsWithParams(
     params: string,
     options: any = {}
@@ -122,28 +124,6 @@ export class YampiService {
       throw error;
     }
   }
-  public async getUpsellsWithParams(
-    params: string,
-    options: any = {}
-  ): Promise<any> {
-    try {
-      const credentials = await this.getCredentialKeys()
-        .pipe(first())
-        .toPromise();
-
-      const coreOptions = this.utilsService.createAxiosOptions(
-        environment.yampiURL,
-        `${credentials.alias}/pricing/upsells?${params}`,
-        this.headerWithAuthentication
-      );
-
-      const { data } = await axios.request({ ...coreOptions, ...options });
-      return data;
-    } catch (error) {
-      throw error;
-    }
-  }
-
   public async createKit(kit: Kit, options: any = {}): Promise<any> {
     try {
       const credentials = await this.getCredentialKeys()
@@ -213,6 +193,27 @@ export class YampiService {
     }
   }
 
+  public async getUpsellsWithParams(
+    params: string,
+    options: any = {}
+  ): Promise<any> {
+    try {
+      const credentials = await this.getCredentialKeys()
+        .pipe(first())
+        .toPromise();
+
+      const coreOptions = this.utilsService.createAxiosOptions(
+        environment.yampiURL,
+        `${credentials.alias}/pricing/upsells?${params}`,
+        this.headerWithAuthentication
+      );
+
+      const { data } = await axios.request({ ...coreOptions, ...options });
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
   public async createUpsell(upsell: Upsell, options: any = {}): Promise<any> {
     try {
       const credentials = await this.getCredentialKeys()
@@ -268,6 +269,96 @@ export class YampiService {
       const coreOptions = this.utilsService.createAxiosOptions(
         environment.yampiURL,
         `${credentials.alias}/pricing/upsells/${upsell}`,
+        this.headerWithAuthentication
+      );
+
+      const data = await axios.request({
+        ...coreOptions,
+        ...options,
+        method: 'DELETE',
+      });
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  public async getOrderBumpsWithParams(
+    params: string,
+    options: any = {}
+  ): Promise<any> {
+    try {
+      const credentials = await this.getCredentialKeys()
+        .pipe(first())
+        .toPromise();
+
+      const coreOptions = this.utilsService.createAxiosOptions(
+        environment.yampiURL,
+        `${credentials.alias}/pricing/order-bumps?${params}`,
+        this.headerWithAuthentication
+      );
+
+      const { data } = await axios.request({ ...coreOptions, ...options });
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+  public async createOrderBump(orderBump: OrderBump, options: any = {}): Promise<any> {
+    try {
+      const credentials = await this.getCredentialKeys()
+        .pipe(first())
+        .toPromise();
+
+      const coreOptions = this.utilsService.createAxiosOptions(
+        environment.yampiURL,
+        `${credentials.alias}/pricing/order-bumps`,
+        this.headerWithAuthentication
+      );
+
+      const data = await axios.request({
+        ...coreOptions,
+        ...options,
+        method: 'POST',
+        data: orderBump,
+      });
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+  public async editOrderBump(orderBump: OrderBump, options: any = {}): Promise<any> {
+    try {
+      const credentials = await this.getCredentialKeys()
+        .pipe(first())
+        .toPromise();
+
+      const coreOptions = this.utilsService.createAxiosOptions(
+        environment.yampiURL,
+        `${credentials.alias}/pricing/order-bumps/${orderBump.id}`,
+        this.headerWithAuthentication
+      );
+
+      const data = await axios.request({
+        ...coreOptions,
+        ...options,
+        method: 'PUT',
+        data: orderBump,
+      });
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+  public async deleteOrderBump(orderBump: number, options: any = {}): Promise<any> {
+    try {
+      const credentials = await this.getCredentialKeys()
+        .pipe(first())
+        .toPromise();
+
+      const coreOptions = this.utilsService.createAxiosOptions(
+        environment.yampiURL,
+        `${credentials.alias}/pricing/order-bumps/${orderBump}`,
         this.headerWithAuthentication
       );
 

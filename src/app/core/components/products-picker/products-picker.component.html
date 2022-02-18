@@ -21,7 +21,7 @@
   <div class="product-chips">
     <mat-chip-list #chipList>
       <mat-chip *ngFor="let item of myProducts" (removed)="removeItem(item)">
-        {{ item.name }}
+        {{ item.name ? item.name : item.id  }}
         <button matChipRemove>
           <mat-icon>cancel</mat-icon>
         </button>
@@ -47,7 +47,7 @@
             (click)="$event.stopPropagation()"
             (change)="$event ? selection.toggle(row.id) : null"
             [checked]="selection.isSelected(row.id)"
-            [disabled]="selection.selected.length > 1 && !multipleSelection"
+            [disabled]="selection.selected.length > 0 && !multipleSelection && !selection.isSelected(row.id)"
           >
           </mat-checkbox>
         </td>

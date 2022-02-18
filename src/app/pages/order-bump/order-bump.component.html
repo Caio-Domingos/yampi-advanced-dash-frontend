@@ -1,1 +1,361 @@
-<p>order-bump works!</p>
+<main [style.alignItems]="pageDisplay === 'home' ? 'center' : 'flex-start'">
+  <div id="home" *ngIf="pageDisplay === 'home'">
+    <h1>Order Bump</h1>
+
+    <div class="options">
+      <button
+        mat-raised-button
+        color="primary"
+        class="btn-kit"
+        (click)="setView('add')"
+      >
+        <mat-icon aria-hidden="false" aria-label="Example home icon"
+          >add</mat-icon
+        >
+        Criar novo Order Bump
+      </button>
+      <p>Ou</p>
+      <button
+        mat-raised-button
+        color="primary"
+        class="btn-kit"
+        (click)="setView('list')"
+      >
+        <mat-icon aria-hidden="false" aria-label="Example home icon 2"
+          >list</mat-icon
+        >
+        Veja os existestes
+      </button>
+    </div>
+  </div>
+  <div id="list" *ngIf="pageDisplay === 'list'">
+    <yad-order-bump-selector
+      (editOrderBump)="editOrderBump($event)"
+      (deleteOrderBump)="deleteOrderBump($event)"
+      [deleteEvent]="deletedItem"
+    ></yad-order-bump-selector>
+  </div>
+  <div id="editor" *ngIf="pageDisplay === 'add' || pageDisplay === 'edit'">
+    <form [formGroup]="orderBumpForm" (ngSubmit)="saveOrderBump()">
+      <mat-vertical-stepper
+        #upsellFormStepper="matVerticalStepper"
+        formArrayName="array"
+        [linear]="false"
+      >
+        <mat-step formGroupName="0" [stepControl]="orderBumpForm1">
+          <ng-template matStepLabel> Nome do Order Bump</ng-template>
+
+          <div class="step-content col start">
+            <mat-form-field>
+              <mat-label>Name</mat-label>
+              <input matInput formControlName="name" required />
+              <mat-error>Esse campo é obrigatório</mat-error>
+            </mat-form-field>
+
+            <mat-slide-toggle formControlName="active"
+              >Kit ativo?</mat-slide-toggle
+            >
+
+            <button
+              mat-raised-button
+              color="primary"
+              class="step-btn"
+              matStepperNext
+              type="button"
+            >
+              Próximo
+            </button>
+          </div>
+        </mat-step>
+        <mat-step formGroupName="1" [stepControl]="orderBumpForm2">
+          <ng-template matStepLabel> Produto à oferecer</ng-template>
+
+          <div class="step-content col start">
+            <mat-form-field style="display: none">
+              <mat-label>-</mat-label>
+              <input matInput formControlName="resource_id" />
+            </mat-form-field>
+
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="openProductPickerDialog('r')"
+              type="button"
+              *ngIf="!sameProductControl.value"
+            >
+              <mat-icon aria-hidden="false" aria-label="Example home icon"
+                >add</mat-icon
+              >
+              Adicionar os produtos
+            </button>
+
+            <p *ngIf="!sameProductControl.value">
+              <strong>{{
+                orderBumpForm2.get("resource_id")!.value
+                  ? resourceProduct!.name + " "
+                  : "Nenhum produto "
+              }}</strong>
+              escolhido
+            </p>
+
+            <mat-slide-toggle formControlName="sameProduct"
+              >Mesmo produto da compra?</mat-slide-toggle
+            >
+
+            <mat-form-field *ngIf="sameProductControl.value">
+              <mat-label>% de desconto</mat-label>
+              <input matInput formControlName="percentDiscount" required />
+            </mat-form-field>
+
+            <div class="step-content row start">
+              <button
+                mat-raised-button
+                class="step-btn"
+                color="warn"
+                matStepperPrevious
+                type="button"
+              >
+                Voltar
+              </button>
+              <button
+                mat-raised-button
+                color="primary"
+                class="step-btn"
+                matStepperNext
+                type="button"
+              >
+                Próximo
+              </button>
+            </div>
+          </div>
+        </mat-step>
+        <mat-step formGroupName="2" [stepControl]="orderBumpForm3">
+          <ng-template matStepLabel> Valores</ng-template>
+
+          <div class="step-content col start">
+            <mat-form-field *ngIf="!sameProductControl.value">
+              <mat-label>Preço de venda</mat-label>
+              <input
+                matInput
+                formControlName="price_sale"
+                type="number"
+                required
+              />
+            </mat-form-field>
+
+            <mat-form-field *ngIf="!sameProductControl.value">
+              <mat-label>Preço de desconto</mat-label>
+              <input
+                matInput
+                formControlName="price_discount"
+                type="number"
+                required
+              />
+            </mat-form-field>
+
+            <mat-button-toggle-group
+              formControlName="accepted_payment"
+              name="accepted_payment"
+            >
+              <mat-button-toggle [value]="obPaymentsType.ALL"
+                >Todos</mat-button-toggle
+              >
+              <mat-button-toggle [value]="obPaymentsType.CREDIT_CARD"
+                >Cartão de crédito</mat-button-toggle
+              >
+              <mat-button-toggle [value]="obPaymentsType.BILLET"
+                >Boleto</mat-button-toggle
+              >
+              <mat-button-toggle [value]="obPaymentsType.DEPOSIT"
+                >Depósito</mat-button-toggle
+              >
+              <mat-button-toggle [value]="obPaymentsType.PIX"
+                >Pix</mat-button-toggle
+              >
+            </mat-button-toggle-group>
+
+            <div class="step-content row start">
+              <button
+                mat-raised-button
+                class="step-btn"
+                color="warn"
+                matStepperPrevious
+                type="button"
+              >
+                Voltar
+              </button>
+              <button
+                mat-raised-button
+                color="primary"
+                class="step-btn"
+                matStepperNext
+                type="button"
+              >
+                Próximo
+              </button>
+            </div>
+          </div>
+        </mat-step>
+        <mat-step formGroupName="3" [stepControl]="orderBumpForm4">
+          <ng-template matStepLabel> Regras </ng-template>
+
+          <div class="step-content col start">
+            <mat-button-toggle-group
+              formControlName="display_rule"
+              name="display_rule"
+              [disabled]="sameProductControl.value"
+            >
+              <mat-button-toggle [value]="obDisplayRule.ALWAYS"
+                >Sempre</mat-button-toggle
+              >
+              <mat-button-toggle [value]="obDisplayRule.PRODUCTS_AMOUNT"
+                >Valor</mat-button-toggle
+              >
+              <mat-button-toggle [value]="obDisplayRule.SELECTED_PRODUCTS"
+                >Produtos</mat-button-toggle
+              >
+            </mat-button-toggle-group>
+
+            <mat-button-toggle-group
+              *ngIf="
+                orderBumpForm4.get('display_rule')?.value ===
+                obDisplayRule.PRODUCTS_AMOUNT
+              "
+              formControlName="amount_rule"
+              name="amount_rule"
+            >
+              <mat-button-toggle [value]="obAmountRule.GREATER_THAN"
+                >Maior que</mat-button-toggle
+              >
+              <mat-button-toggle [value]="obAmountRule.LOWER_THAN"
+                >Menor que</mat-button-toggle
+              >
+            </mat-button-toggle-group>
+
+            <mat-form-field
+              *ngIf="
+                orderBumpForm4.get('display_rule')?.value ===
+                obDisplayRule.PRODUCTS_AMOUNT
+              "
+            >
+              <mat-label>Valor</mat-label>
+              <input
+                matInput
+                formControlName="amount_value"
+                type="number"
+                required
+              />
+              <mat-error>Esse campo é obrigatório</mat-error>
+            </mat-form-field>
+
+            <button
+              *ngIf="
+                orderBumpForm4.get('display_rule')?.value ===
+                obDisplayRule.SELECTED_PRODUCTS
+              "
+              mat-raised-button
+              color="primary"
+              (click)="openProductPickerDialog('d')"
+              type="button"
+            >
+              <mat-icon aria-hidden="false" aria-label="Example home icon"
+                >add</mat-icon
+              >
+              Adicionar os produtos
+            </button>
+
+            <p
+              *ngIf="
+                orderBumpForm4.get('display_rule')?.value ===
+                obDisplayRule.SELECTED_PRODUCTS
+              "
+            >
+              <strong>{{
+                orderBumpForm4.get("display_product_ids")!.value.length > 0
+                  ? orderBumpForm4.get("display_product_ids")!.value.length + " produtos "
+                  : "Nenhum produto "
+              }}</strong>
+              escolhido
+            </p>
+
+            <div class="step-content row start">
+              <button
+                mat-raised-button
+                class="step-btn"
+                color="warn"
+                matStepperPrevious
+                type="button"
+              >
+                Voltar
+              </button>
+              <button
+                mat-raised-button
+                color="primary"
+                class="step-btn"
+                matStepperNext
+                type="button"
+              >
+                Próximo
+              </button>
+            </div>
+          </div>
+        </mat-step>
+        <mat-step formGroupName="4" [stepControl]="orderBumpForm5">
+          <ng-template matStepLabel> Botão de compra </ng-template>
+
+          <div class="step-content col start">
+            <mat-form-field>
+              <mat-label>Título do botão</mat-label>
+              <input matInput formControlName="p_title" required />
+              <mat-error>Esse campo é obrigatório</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Texto do botão</mat-label>
+              <input matInput formControlName="p_button_text" />
+              <mat-error>Esse campo é obrigatório</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Mensagem</mat-label>
+              <input matInput formControlName="p_message" />
+              <mat-error>Esse campo é obrigatório</mat-error>
+            </mat-form-field>
+
+            <div class="step-content row start">
+              <button
+                mat-raised-button
+                class="step-btn"
+                color="warn"
+                matStepperPrevious
+                type="button"
+              >
+                Voltar
+              </button>
+              <button
+                mat-raised-button
+                color="primary"
+                class="step-btn"
+                type="submit"
+              >
+                Salvar
+              </button>
+            </div>
+          </div>
+        </mat-step>
+      </mat-vertical-stepper>
+    </form>
+  </div>
+
+  <div
+    [style.display]="pageDisplay === 'home' ? 'none' : 'block'"
+    class="fab-back"
+  >
+    <button
+      mat-fab
+      color="warn"
+      aria-label="Example icon button with a menu icon"
+      (click)="pageDisplay = 'home'"
+    >
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+  </div>
+</main>

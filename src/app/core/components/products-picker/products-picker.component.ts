@@ -104,9 +104,8 @@ export class ProductsPickerComponent implements AfterViewInit {
           : this.data.products.find((e) => e.id === event.added[0]);
 
         this.myProducts.push({
+          ...prod,
           id: event.added[0],
-          name: prod!.name,
-          active: prod!.active,
         });
       }
 
