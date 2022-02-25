@@ -67,6 +67,9 @@ export class UpsellComponent implements OnInit {
     return this.upsellForm.get('array')?.get([4])!;
   }
 
+  errorsShow = false;
+  errors: string[] = [];
+
   constructor(
     private matDialog: MatDialog,
     private fb: FormBuilder,
@@ -78,14 +81,91 @@ export class UpsellComponent implements OnInit {
   setView(view: string) {
     this.pageDisplay = view;
 
-    if (view === 'add') {
-      this.editID = 0;
-      this.purchaseProductEditing = 0;
+    switch (view) {
+      case 'home': {
+        this.errorsShow = false;
+        this.errors = [];
+        break;
+      }
 
-      this.suggestedProduct = null;
-      this.purchasedProducts = [];
-      this.createNewUpsellForm();
+      case 'add': {
+        this.editID = 0;
+        this.purchaseProductEditing = 0;
+
+        this.suggestedProduct = null;
+        this.purchasedProducts = [];
+        this.createNewUpsellForm();
+        break;
+      }
+      case 'edit': {
+        break;
+      }
+
+      default: {
+        break;
+      }
     }
+
+    if (view === 'add') {
+    }
+  }
+
+  private validateForm() {
+    const errors = [];
+
+    // this.upsellForm1
+    const name = this.upsellForm1.get('name')?.value;
+    const context = this.upsellForm1.get('context')?.value;
+    if (!name) {
+      errors.push('1. Nome é obrigatório');
+    }
+
+    // this.upsellForm2
+    const purchased_product_id = this.upsellForm2.get(
+      'purchased_product_id'
+    )?.value;
+    if (!purchased_product_id) {
+      errors.push('2. Produto comprado é obrigatório');
+    }
+
+    // this.upsellForm3
+    const suggested_product_id = this.upsellForm2.get(
+      'suggested_product_id'
+    )?.value;
+    if (!suggested_product_id && !this.sameProduct) {
+      errors.push('3. Produto sugerido é obrigatório');
+    }
+
+    // this.upsellForm4
+    const product_quantity = this.upsellForm2.get('product_quantity')?.value;
+    const product_price = this.upsellForm2.get('product_price')?.value;
+    if (
+      context !== 'before' &&
+      typeof product_quantity === 'number' &&
+      product_quantity <= 0
+    ) {
+      errors.push('4. Quantidade do produto é obrigatório');
+    }
+    if (
+      context !== 'before' &&
+      typeof product_quantity === 'number' &&
+      product_price <= 0
+    ) {
+      errors.push('4. Valor do produto é obrigatório');
+    }
+
+    // this.upsellForm5
+    const email_subject = this.upsellForm5.get('email_subject')?.value;
+    const description = this.upsellForm5.get('description')?.value;
+
+    if (context === 'delayed' && !email_subject) {
+      errors.push('5. Assunto do email é obrigatório');
+    }
+    if (context !== 'before' && !description) {
+      errors.push('5. Descrição do Upsell/Email é obrigatório');
+    }
+
+    return errors;
   }
 
   public openProductPickerDialog(relativeArray: 's' | 'p') {
@@ -223,11 +303,16 @@ export class UpsellComponent implements OnInit {
 
   public async saveUpsell() {
     try {
-      if (
-        this.pageDisplay === 'add' &&
-        (this.purchasedProducts.length === 0 || !this.suggestedProduct)
-      ) {
-        throw { response: { data: { error: 'Sem produtos escolhidos' } } };
+      const validation = this.validateForm();
+      console.log('errors =>', validation);
+
+      if (validation.length > 0) {
+        this.errors = validation;
+        this.errorsShow = true;
+        return;
+      } else {
+        this.errors = [];
+        this.errorsShow = false;
       }
 
       let form: Upsell = {};

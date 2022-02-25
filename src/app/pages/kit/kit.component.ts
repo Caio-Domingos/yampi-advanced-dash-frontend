@@ -51,6 +51,18 @@ export class KitComponent implements OnInit, AfterViewInit {
   get addKitFormArray(): AbstractControl | null {
     return this.addKitForm.get('addKitFormArray');
   }
+  get kitForm1(): AbstractControl {
+    return this.addKitForm.get('array')?.get([0])!;
+  }
+  get kitForm2(): AbstractControl {
+    return this.addKitForm.get('array')?.get([1])!;
+  }
+  get kitForm3(): AbstractControl {
+    return this.addKitForm.get('array')?.get([2])!;
+  }
+  get kitForm4(): AbstractControl {
+    return this.addKitForm.get('array')?.get([3])!;
+  }
 
   get products_ids(): AbstractControl | null {
     return this.addKitFormArray?.get([1])!.get('products_ids')!;
@@ -59,6 +71,9 @@ export class KitComponent implements OnInit, AfterViewInit {
   get rangeDate(): AbstractControl | null {
     return this.addKitFormArray?.get([3])!.get('range')!;
   }
+
+  errorsShow = false;
+  errors: string[] = [];
 
   constructor(
     private matDialog: MatDialog,
@@ -101,10 +116,63 @@ export class KitComponent implements OnInit, AfterViewInit {
   setView(view: string) {
     this.pageDisplay = view;
 
-    if (view === 'add') {
-      this.addKitForm.reset();
-      this.editID = '';
+    switch (view) {
+      case 'home': {
+        this.errorsShow = false;
+        this.errors = [];
+        break;
+      }
+
+      case 'add': {
+        this.addKitForm.reset();
+        this.editID = '';
+        break;
+      }
+      case 'edit': {
+        break;
+      }
+
+      default: {
+        break;
+      }
     }
+  }
+
+  private validateForm() {
+    const errors = [];
+
+    // this.kitForm1
+    const name = this.kitForm1.get('name')?.value;
+    if (!name) {
+      errors.push('1. Nome é obrigatório');
+    }
+
+    // this.kitForm2
+    const products_ids = this.kitForm2.get('products_ids')?.value;
+    if (!products_ids) {
+      errors.push('2. Produto(s) a ser(em) oferecido(s) é(são) obrigatório(s)');
+    }
+
+    // this.kitForm3
+    const discount_type = this.kitForm3.get('discount_type')?.value;
+    const discount_value = this.kitForm3.get('discount_value')?.value;
+    if (!(discount_type === 'p' || discount_type === 'v')) {
+      errors.push('3. Tipo de desconto é obrigatório');
+    }
+    if (typeof discount_value === 'number' && discount_value <= 0) {
+      errors.push('3. Valor de desconto deve ser maior que 0');
+    }
+
+    // this.kitForm4
+    const start_at = this.kitForm3.get('start_at')?.value;
+    const end_at = this.kitForm3.get('end_at')?.value;
+    if (!start_at) {
+      errors.push('4. Data de início é obrigatória');
+    }
+    if (!end_at) {
+      errors.push('4. Data de término é obrigatória');
+    }
+    return errors;
   }
 
   removeProduct(item: Product): void {
@@ -189,6 +257,18 @@ export class KitComponent implements OnInit, AfterViewInit {
 
   async saveKit() {
     try {
+      const validation = this.validateForm();
+      console.log('errors =>', validation);
+
+      if (validation.length > 0) {
+        this.errors = validation;
+        this.errorsShow = true;
+        return;
+      } else {
+        this.errors = [];
+        this.errorsShow = false;
+      }
+
       let form: any = {};
       this.addKitFormArray?.value.forEach((element: any) => {
         form = { ...form, ...element };

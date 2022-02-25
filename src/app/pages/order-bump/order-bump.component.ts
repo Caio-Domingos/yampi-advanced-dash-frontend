@@ -99,6 +99,9 @@ export class OrderBumpComponent implements OnInit {
 
   mySubs: Subscription[] = [];
 
+  errorsShow = false;
+  errors: string[] = [];
+
   constructor(
     private matDialog: MatDialog,
     private fb: FormBuilder,
@@ -122,6 +125,8 @@ export class OrderBumpComponent implements OnInit {
     switch (view) {
       case 'home': {
         this.clearSubsValueChanges();
+        this.errorsShow = false;
+        this.errors = [];
         break;
       }
 
@@ -140,6 +145,83 @@ export class OrderBumpComponent implements OnInit {
         break;
       }
     }
+  }
+
+  private validateForm() {
+    const errors = [];
+
+    // this.orderBumpForm1
+    const name = this.orderBumpForm1.get('name')?.value;
+
+    if (!name) {
+      errors.push('1. Nome é obrigatório');
+    }
+
+    // this.orderBumpForm2
+    const resource_id = this.orderBumpForm2.get('resource_id')?.value;
+    const sameProduct = this.orderBumpForm2.get('sameProduct')?.value;
+    const percentDiscount = this.orderBumpForm2.get('percentDiscount')?.value;
+
+    if (!resource_id && !sameProduct) {
+      errors.push('2. Produto a ser oferecido é obrigatório');
+    }
+
+    if (
+      sameProduct &&
+      typeof percentDiscount === 'number' &&
+      percentDiscount <= 0
+    ) {
+      errors.push('2. Porcentagem de desconto é obrigatório');
+    }
+
+    // this.orderBumpForm3
+    const price_sale = this.orderBumpForm3.get('price_sale')?.value;
+    const price_discount = this.orderBumpForm3.get('price_discount')?.value;
+
+    if (!sameProduct && typeof price_sale === 'number' && price_sale <= 0) {
+      errors.push('3. Valor de venda é necessário');
+    }
+
+    if (
+      typeof price_sale === 'number' &&
+      typeof price_discount === 'number' &&
+      price_sale < price_discount
+    ) {
+      errors.push('3. Valor de desconto deve ser menor que o preço de venda');
+    }
+
+    // this.orderBumpForm4
+    const display_rule = this.orderBumpForm4.get('display_rule')?.value;
+    const amount_rule = this.orderBumpForm4.get('amount_rule')?.value;
+    const amount_value = this.orderBumpForm4.get('amount_value')?.value;
+    const display_product_ids = this.orderBumpForm4.get(
+      'display_product_ids'
+    )?.value;
+
+    if (
+      display_rule === obDisplayRule.PRODUCTS_AMOUNT &&
+      amount_rule === obAmountRule.LOWER_THAN &&
+      typeof amount_value === 'number' &&
+      amount_value <= 0
+    ) {
+      errors.push('4. Valor da regra deve ser maior que 0');
+    }
+
+    if (
+      display_rule === obDisplayRule.SELECTED_PRODUCTS &&
+      display_product_ids.length === 0
+    ) {
+      errors.push('4. Produtos da regra são obrigatórios');
+    }
+
+    // this.orderBumpForm5
+    const p_title = this.orderBumpForm5.get('p_title')?.value;
+
+    if (!p_title) {
+      errors.push('5. ítulo do botão é obrigatório');
+    }
+
+    return errors;
   }
 
   private createSubsValueChanges() {
@@ -367,6 +449,18 @@ export class OrderBumpComponent implements OnInit {
 
   public async saveOrderBump() {
     try {
+      const validation = this.validateForm();
+      console.log('errors =>', validation);
+
+      if (validation.length > 0) {
+        this.errors = validation;
+        this.errorsShow = true;
+        return;
+      } else {
+        this.errors = [];
+        this.errorsShow = false;
+      }
+
       let form: OrderBump[] = this.mapForm();
       const orderBumps = form;
 

@@ -149,7 +149,7 @@
                 matInput
                 formControlName="price_discount"
                 type="number"
-                required
+
               />
             </mat-form-field>
 
@@ -197,7 +197,7 @@
           </div>
         </mat-step>
         <mat-step formGroupName="3" [stepControl]="orderBumpForm4">
-          <ng-template matStepLabel> Regras </ng-template>
+          <ng-template matStepLabel>  Regras </ng-template>
 
           <div class="step-content col start">
             <mat-button-toggle-group
@@ -301,7 +301,7 @@
           </div>
         </mat-step>
         <mat-step formGroupName="4" [stepControl]="orderBumpForm5">
-          <ng-template matStepLabel> Botão de compra </ng-template>
+          <ng-template matStepLabel>  Botão de compra </ng-template>
 
           <div class="step-content col start">
             <mat-form-field>
@@ -343,6 +343,8 @@
         </mat-step>
       </mat-vertical-stepper>
     </form>
+
+    <yad-errors-viewer [errors]="errors" [show]="errorsShow"></yad-errors-viewer>
   </div>
 
   <div
