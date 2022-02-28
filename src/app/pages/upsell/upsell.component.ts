@@ -1,7 +1,8 @@
+import { LoadingModalComponent } from './../../core/components/loading-modal/loading-modal.component';
 import { Product } from './../../core/components/products-picker/products-picker.component';
 import { Component, EventEmitter, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ProductsPickerComponent } from 'src/app/core/components/products-picker/products-picker.component';
 import { KitService } from 'src/services/kit.service';
 import { BehaviorSubject } from 'rxjs';
@@ -69,6 +70,8 @@ export class UpsellComponent implements OnInit {
 
   errorsShow = false;
   errors: string[] = [];
+
+  loadingAnchor: MatDialogRef<LoadingModalComponent, any> | null = null;
 
   constructor(
     private matDialog: MatDialog,
@@ -303,12 +306,14 @@ export class UpsellComponent implements OnInit {
 
   public async saveUpsell() {
     try {
+      this.loadingAnchor = this.createLoadingModal('Salvando OrderBump...');
       const validation = this.validateForm();
       console.log('errors =>', validation);
 
       if (validation.length > 0) {
         this.errors = validation;
         this.errorsShow = true;
+        this.loadingAnchor.close();
         return;
       } else {
         this.errors = [];
@@ -362,9 +367,13 @@ export class UpsellComponent implements OnInit {
           atualIndex++;
           if (atualIndex === this.purchasedProducts.length) {
             clearInterval(intervalID);
+            if (this.loadingAnchor) this.loadingAnchor!.close();
+            this.loadingAnchor = null;
             this.setView('home');
           }
         } catch (error: any) {
+          if (this.loadingAnchor) this.loadingAnchor!.close();
+          this.loadingAnchor = null;
           if (error.response) {
             console.log(error.response.data);
           } else if (error.request) {
@@ -377,6 +386,8 @@ export class UpsellComponent implements OnInit {
         }
       }, 1000);
     } catch (error: any) {
+      if (this.loadingAnchor) this.loadingAnchor!.close();
+      this.loadingAnchor = null;
       if (error.response) {
         console.log(error.response.data);
       } else if (error.request) {
@@ -386,5 +397,14 @@ export class UpsellComponent implements OnInit {
       }
       console.log(error.config);
     }
+  }
+
+  private createLoadingModal(message: string = 'Carregando...') {
+    const dialogRef = this.matDialog.open(LoadingModalComponent, {
+      width: '50vw',
+      data: { message },
+    });
+
+    return dialogRef;
   }
 }

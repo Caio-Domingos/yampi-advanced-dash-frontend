@@ -1,3 +1,4 @@
+import { LoadingModalComponent } from './../../core/components/loading-modal/loading-modal.component';
 import { AfterViewInit, Component, EventEmitter, OnInit } from '@angular/core';
 import {
   AbstractControl,
@@ -5,7 +6,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {
   Product,
   ProductsPickerComponent,
@@ -75,6 +76,7 @@ export class KitComponent implements OnInit, AfterViewInit {
   errorsShow = false;
   errors: string[] = [];
 
+  loadingAnchor: MatDialogRef<LoadingModalComponent, any> | null = null;
   constructor(
     private matDialog: MatDialog,
     private fb: FormBuilder,
@@ -257,12 +259,15 @@ export class KitComponent implements OnInit, AfterViewInit {
 
   async saveKit() {
     try {
+      this.loadingAnchor = this.createLoadingModal('Salvando OrderBump...');
       const validation = this.validateForm();
       console.log('errors =>', validation);
 
       if (validation.length > 0) {
         this.errors = validation;
         this.errorsShow = true;
+        this.loadingAnchor.close();
+
         return;
       } else {
         this.errors = [];
@@ -299,8 +304,13 @@ export class KitComponent implements OnInit, AfterViewInit {
         });
       }
       console.log('response => ', response);
+      if (this.loadingAnchor) this.loadingAnchor!.close();
+      this.loadingAnchor = null;
       this.setView('home');
     } catch (error: any) {
+      if (this.loadingAnchor) this.loadingAnchor!.close();
+      this.loadingAnchor = null;
+
       if (error.response) {
         console.log(error.response.data);
       } else if (error.request) {
@@ -310,5 +320,14 @@ export class KitComponent implements OnInit, AfterViewInit {
       }
       console.log(error.config);
     }
+  }
+
+  private createLoadingModal(message: string = 'Carregando...') {
+    const dialogRef = this.matDialog.open(LoadingModalComponent, {
+      width: '50vw',
+      data: { message },
+    });
+
+    return dialogRef;
   }
 }

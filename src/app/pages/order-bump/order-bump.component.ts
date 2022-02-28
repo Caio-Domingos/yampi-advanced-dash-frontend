@@ -1,6 +1,7 @@
+import { LoadingModalComponent } from './../../core/components/loading-modal/loading-modal.component';
 import { ProductsPickerComponent } from 'src/app/core/components/products-picker/products-picker.component';
 import { Product } from './../../core/components/products-picker/products-picker.component';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {
   OrderBumpService,
   obPaymentsType,
@@ -101,6 +102,8 @@ export class OrderBumpComponent implements OnInit {
 
   errorsShow = false;
   errors: string[] = [];
+
+  loadingAnchor: MatDialogRef<LoadingModalComponent, any> | null = null;
 
   constructor(
     private matDialog: MatDialog,
@@ -449,12 +452,14 @@ export class OrderBumpComponent implements OnInit {
 
   public async saveOrderBump() {
     try {
+      this.loadingAnchor = this.createLoadingModal('Salvando OrderBump...');
       const validation = this.validateForm();
       console.log('errors =>', validation);
 
       if (validation.length > 0) {
         this.errors = validation;
         this.errorsShow = true;
+        this.loadingAnchor.close();
         return;
       } else {
         this.errors = [];
@@ -481,11 +486,16 @@ export class OrderBumpComponent implements OnInit {
         myIndex++;
         if (myIndex === orderBumps.length) {
           clearInterval(intervalID);
+          if (this.loadingAnchor) this.loadingAnchor!.close();
+          this.loadingAnchor = null;
           console.log('Finish');
           this.setView('home');
         }
       }, 1000);
-    } catch (error) {}
+    } catch (error) {
+      if (this.loadingAnchor) this.loadingAnchor!.close();
+      this.loadingAnchor = null;
+    }
   }
 
   private mapForm() {
@@ -561,5 +571,14 @@ export class OrderBumpComponent implements OnInit {
       price_discount: _priceDiscount,
       display_product_ids: _displayProductsIds,
     };
+  }
+
+  private createLoadingModal(message: string = 'Carregando...') {
+    const dialogRef = this.matDialog.open(LoadingModalComponent, {
+      width: '50vw',
+      data: { message },
+    });
+
+    return dialogRef;
   }
 }
