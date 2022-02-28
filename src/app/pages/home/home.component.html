@@ -1,24 +1,28 @@
-<div class="grid-container">
-  <h1 class="mat-h1">Dashboard</h1>
-  <mat-grid-list cols="2" rowHeight="350px">
-    <mat-grid-tile *ngFor="let card of cards | async" [colspan]="card.cols" [rowspan]="card.rows">
-      <mat-card class="dashboard-card">
-        <mat-card-header>
-          <mat-card-title>
-            {{card.title}}
-            <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
-              <mat-icon>more_vert</mat-icon>
-            </button>
-            <mat-menu #menu="matMenu" xPosition="before">
-              <button mat-menu-item>Expand</button>
-              <button mat-menu-item>Remove</button>
-            </mat-menu>
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content class="dashboard-card-content">
-          <div>Card Content Here</div>
-        </mat-card-content>
-      </mat-card>
-    </mat-grid-tile>
-  </mat-grid-list>
-</div>
+<main>
+  <div class="title">
+    <h1>Bem vindo ao Yampi Dashboard advanced!</h1>
+    <h4>v0.2.6</h4>
+  </div>
+
+  <div class="content">
+    <mat-card>
+      <h2>Primeiros passos</h2>
+
+      <ul>
+        <li matRipple [matRippleColor]="'#23a45670'">
+          <div class="ripple-content"></div>
+          <span>Inserir as credenciais da loja</span>
+        </li>
+        <li matRipple [matRippleColor]="'#23a45670'" (click)="goTo('kit')">
+          <span>Criar novos combos de produtos</span>
+        </li>
+        <li matRipple [matRippleColor]="'#23a45670'" (click)="goTo('upsell')">
+          <span>Criar Upsells em massa</span>
+        </li>
+        <li matRipple [matRippleColor]="'#23a45670'" (click)="goTo('order-bump')">
+          <span>Criar OrderBumps em massa</span>
+        </li>
+      </ul>
+    </mat-card>
+  </div>
+</main>

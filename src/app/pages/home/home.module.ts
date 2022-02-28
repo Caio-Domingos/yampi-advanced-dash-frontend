@@ -1,3 +1,5 @@
+import { StoreCredentialsFormComponent } from './../../core/components/store-credentials-form/store-credentials-form.component';
+import { MaterialAngularBundleModule } from './../../core/material-angular/material-angular-bundle.module';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -10,20 +12,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { LayoutModule } from '@angular/cdk/layout';
 
-
 @NgModule({
-  declarations: [
-    HomeComponent
-  ],
-  imports: [
-    CommonModule,
-    HomeRoutingModule,
-    MatGridListModule,
-    MatCardModule,
-    MatMenuModule,
-    MatIconModule,
-    MatButtonModule,
-    LayoutModule
-  ]
+  declarations: [HomeComponent],
+  imports: [CommonModule, HomeRoutingModule, MaterialAngularBundleModule],
+  entryComponents: [StoreCredentialsFormComponent],
 })
-export class HomeModule { }
+export class HomeModule {}

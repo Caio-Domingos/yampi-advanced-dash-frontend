@@ -36,6 +36,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
 import { MatNativeDateModule } from '@angular/material/core';
+import {MatRippleModule} from '@angular/material/core';
+
 
 @NgModule({
   declarations: [],
@@ -74,7 +76,8 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatToolbarModule,
     MatTooltipModule,
     MatTreeModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatRippleModule
   ],
   imports: [CommonModule],
 })
