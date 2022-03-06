@@ -200,7 +200,7 @@
             </mat-form-field>
 
             <mat-form-field>
-              <mat-label>Preço do produto</mat-label>
+              <mat-label> {{!sameProduct ? 'Preço do produto' : '% de valor do produto'}} </mat-label>
               <input
                 matInput
                 formControlName="product_price"
@@ -261,7 +261,6 @@
               <input
                 matInput
                 formControlName="email_subject"
-                type="number"
                 required
               />
               <mat-error>Esse campo é obrigatório</mat-error>
@@ -273,7 +272,7 @@
                   ? "Corpo do email"
                   : "Mensagem do Upsell"
               }}</mat-label>
-              <textarea matInput formControlName="description"></textarea>
+              <textarea rows="10" matInput formControlName="description"></textarea>
               <mat-error>Esse campo é obrigatório</mat-error>
             </mat-form-field>
 

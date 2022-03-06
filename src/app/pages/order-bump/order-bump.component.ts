@@ -35,7 +35,7 @@ export class OrderBumpComponent implements OnInit {
     return obAmountRule;
   }
 
-  pageDisplay: string = 'add';
+  pageDisplay: string = 'home';
 
   editID: number = 0;
   deletedItem: EventEmitter<string> = new EventEmitter(true);
@@ -43,7 +43,7 @@ export class OrderBumpComponent implements OnInit {
   orderBumpForm: FormGroup = new FormGroup({
     array: new FormArray([
       new FormGroup({
-        name: new FormControl('Teste'),
+        name: new FormControl(''),
         active: new FormControl(true),
       }),
       new FormGroup({
@@ -54,8 +54,8 @@ export class OrderBumpComponent implements OnInit {
         percentDiscount: new FormControl(0),
       }),
       new FormGroup({
-        price_sale: new FormControl(10),
-        price_discount: new FormControl(20),
+        price_sale: new FormControl(0),
+        price_discount: new FormControl(0),
         accepted_payment: new FormControl(obPaymentsType.ALL),
       }),
       new FormGroup({
@@ -65,9 +65,9 @@ export class OrderBumpComponent implements OnInit {
         display_product_ids: new FormControl([]),
       }),
       new FormGroup({
-        p_title: new FormControl('Titulo do botão'),
-        p_message: new FormControl('Mensagem do botão'),
-        p_button_text: new FormControl('Texto do botão'),
+        p_title: new FormControl(''),
+        p_message: new FormControl(''),
+        p_button_text: new FormControl(''),
       }),
     ]),
   });
@@ -322,6 +322,7 @@ export class OrderBumpComponent implements OnInit {
   public openProductPickerDialog(relativeArray: 'r' | 'd') {
     const dialogRef = this.matDialog.open(ProductsPickerComponent, {
       width: '80vw',
+      maxHeight: '80vh',
       data: {
         products:
           relativeArray === 'd'
@@ -353,7 +354,7 @@ export class OrderBumpComponent implements OnInit {
     this.orderBumpForm = this.fb.group({
       array: this.fb.array([
         this.fb.group({
-          name: this.fb.control('Teste'),
+          name: this.fb.control(''),
           active: this.fb.control(true),
         }),
         this.fb.group({
@@ -364,8 +365,8 @@ export class OrderBumpComponent implements OnInit {
           percentDiscount: this.fb.control(0),
         }),
         this.fb.group({
-          price_sale: this.fb.control(10),
-          price_discount: this.fb.control(20),
+          price_sale: this.fb.control(0),
+          price_discount: this.fb.control(0),
           accepted_payment: this.fb.control(obPaymentsType.ALL),
         }),
         this.fb.group({
@@ -375,9 +376,9 @@ export class OrderBumpComponent implements OnInit {
           display_product_ids: this.fb.control([]),
         }),
         this.fb.group({
-          p_title: this.fb.control('Titulo do botão'),
-          p_message: this.fb.control('Mensagem do botão'),
-          p_button_text: this.fb.control('Texto do botão'),
+          p_title: this.fb.control(''),
+          p_message: this.fb.control(''),
+          p_button_text: this.fb.control(''),
         }),
       ]),
     });
@@ -559,8 +560,7 @@ export class OrderBumpComponent implements OnInit {
       ? product?.skus?.data![0].price_discount
       : product?.skus?.data![0].price_sale;
     const _priceSale = productValue;
-    const _priceDiscount =
-      productValue! - productValue! * (percentDiscount / 100);
+    const _priceDiscount = productValue! * ((100 - percentDiscount) / 100);
 
     // display products ids = element
     const _displayProductsIds = [element];

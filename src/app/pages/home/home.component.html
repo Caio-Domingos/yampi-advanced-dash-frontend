@@ -1,7 +1,7 @@
 <main>
   <div class="title">
     <h1>Bem vindo ao Yampi Dashboard advanced!</h1>
-    <h4>v0.2.7</h4>
+    <h4>v0.2.17</h4>
   </div>
 
   <div class="content">
@@ -9,7 +9,11 @@
       <h2>Primeiros passos</h2>
 
       <ul>
-        <li matRipple [matRippleColor]="'#23a45670'">
+        <li
+          matRipple
+          [matRippleColor]="'#23a45670'"
+          (click)="openStoreCredentialsModal()"
+        >
           <div class="ripple-content"></div>
           <span>Inserir as credenciais da loja</span>
         </li>
@@ -19,7 +23,11 @@
         <li matRipple [matRippleColor]="'#23a45670'" (click)="goTo('upsell')">
           <span>Criar Upsells em massa</span>
         </li>
-        <li matRipple [matRippleColor]="'#23a45670'" (click)="goTo('order-bump')">
+        <li
+          matRipple
+          [matRippleColor]="'#23a45670'"
+          (click)="goTo('order-bump')"
+        >
           <span>Criar OrderBumps em massa</span>
         </li>
       </ul>

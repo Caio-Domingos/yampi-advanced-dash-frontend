@@ -67,6 +67,11 @@ main {
         margin-top: 20px;
       }
     }
+
+    mat-form-field {
+      width: 50%;
+      min-width: 300px;
+    }
   }
 
   .fab-back {

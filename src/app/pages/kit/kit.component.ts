@@ -90,6 +90,7 @@ export class KitComponent implements OnInit, AfterViewInit {
   public openProductPickerDialog() {
     const dialogRef = this.matDialog.open(ProductsPickerComponent, {
       width: '80vw',
+      maxHeight: '80vh',
       data: { products: this.productsNewKit },
     });
 
@@ -259,7 +260,7 @@ export class KitComponent implements OnInit, AfterViewInit {
 
   async saveKit() {
     try {
-      this.loadingAnchor = this.createLoadingModal('Salvando OrderBump...');
+      this.loadingAnchor = this.createLoadingModal('Salvando Kit...');
       const validation = this.validateForm();
       console.log('errors =>', validation);
 

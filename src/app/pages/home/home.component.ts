@@ -12,9 +12,7 @@ import { YampiService } from 'src/services/yampi.service';
 export class HomeComponent implements OnInit {
   constructor(private router: Router, private matDialog: MatDialog) {}
 
-  ngOnInit(): void {
-    this.openStoreCredentialsModal();
-  }
+  ngOnInit(): void {}
 
   goTo(route: string) {
     this.router.navigateByUrl(route);

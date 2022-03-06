@@ -30,7 +30,7 @@
   </div>
 
   <!-- Products Table -->
-  <div class="mat-elevation-z8">
+  <div class="mat-elevation-z8 table-content">
     <table mat-table [dataSource]="products">
       <ng-container matColumnDef="select">
         <th mat-header-cell *matHeaderCellDef class="checkbox-row">
@@ -74,7 +74,7 @@
     </table>
 
     <mat-paginator
-      [pageSizeOptions]="[5, 10, 15]"
+      [pageSizeOptions]="[5, 10, 15, 50]"
       [pageSize]="10"
       [length]="productsCount"
     >

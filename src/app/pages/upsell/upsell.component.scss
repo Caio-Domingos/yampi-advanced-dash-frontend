@@ -66,6 +66,11 @@ main {
         margin: 10px;
         margin-left: 0;
       }
+
+      mat-form-field {
+        width: 50%;
+        min-width: 300px;
+      }
     }
   }
 

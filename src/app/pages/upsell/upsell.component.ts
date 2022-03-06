@@ -15,7 +15,7 @@ import { MatSlideToggleChange } from '@angular/material/slide-toggle';
   styleUrls: ['./upsell.component.scss'],
 })
 export class UpsellComponent implements OnInit {
-  pageDisplay: string = 'add';
+  pageDisplay: string = 'home';
   deletedItem: EventEmitter<number> = new EventEmitter(true);
   editID: number = 0;
   purchaseProductEditing: number = 0;
@@ -127,7 +127,7 @@ export class UpsellComponent implements OnInit {
     const purchased_product_id = this.upsellForm2.get(
       'purchased_product_id'
     )?.value;
-    if (!purchased_product_id) {
+    if (this.purchasedProducts.length === 0) {
       errors.push('2. Produto comprado é obrigatório');
     }
 
@@ -135,7 +135,7 @@ export class UpsellComponent implements OnInit {
     const suggested_product_id = this.upsellForm2.get(
       'suggested_product_id'
     )?.value;
-    if (!suggested_product_id && !this.sameProduct) {
+    if (!this.suggestedProduct?.id && !this.sameProduct) {
       errors.push('3. Produto sugerido é obrigatório');
     }
 
@@ -174,6 +174,7 @@ export class UpsellComponent implements OnInit {
   public openProductPickerDialog(relativeArray: 's' | 'p') {
     const dialogRef = this.matDialog.open(ProductsPickerComponent, {
       width: '80vw',
+      maxHeight: '80vh',
       data: {
         products:
           relativeArray === 'p'
@@ -306,7 +307,7 @@ export class UpsellComponent implements OnInit {
 
   public async saveUpsell() {
     try {
-      this.loadingAnchor = this.createLoadingModal('Salvando OrderBump...');
+      this.loadingAnchor = this.createLoadingModal('Salvando Upsell...');
       const validation = this.validateForm();
       console.log('errors =>', validation);
 
@@ -327,6 +328,8 @@ export class UpsellComponent implements OnInit {
 
       console.log('products => ', this.purchasedProducts);
       console.log('form => ', form);
+
+      const percentValue = this.sameProduct ? form.product_price : 0;
       let atualIndex = 0;
       const intervalID = setInterval(async () => {
         try {
@@ -336,16 +339,22 @@ export class UpsellComponent implements OnInit {
             form.suggested_product = { data: product };
             form.suggested_product_id = product.id;
 
-            form.product_price = product.skus?.data![0].price_discount
-              ? product.skus?.data![0].price_discount! -
-                product.skus?.data![0].price_discount! *
-                  (form.product_price! / 100)
-              : product.skus?.data![0].price_sale! -
-                product.skus?.data![0].price_sale! *
-                  (form.product_price! / 100);
+            const productValue = product.skus?.data![0].price_discount
+              ? product.skus?.data![0].price_discount
+              : product.skus?.data![0].price_sale!;
+
+            console.log('prod value', productValue);
+            console.log('percent', percentValue);
+
+            form.product_price = productValue * ((100 - percentValue!) / 100);
+            console.log('value final', form.product_price);
+          }
+          form.purchased_product_id = product.id;
+
+          if (form.context === 'delayed') {
+            form.sms = form.description;
           }
 
-          form.purchased_product_id = product.id;
           let response;
           if (this.purchaseProductEditing === product.id) {
             // Editing
@@ -359,7 +368,9 @@ export class UpsellComponent implements OnInit {
               ...form,
               name:
                 form.name +
-                ` | Produto comprado - ${product.name} => ${this.suggestedProduct?.name}`,
+                ` | Produto comprado - ${product.name} => ${
+                  !this.sameProduct ? this.suggestedProduct?.name : product.name
+                }`,
             });
           }
           console.log('response =>', response);
